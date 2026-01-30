@@ -1,0 +1,1250 @@
+:root {
+  /* 现代字体系统 */
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  /* 颜色系统 - 与图书馆管理系统保持一致 */
+  /* 主色调 - 深蓝色（专业稳重） */
+  --primary-color: #409eff;
+  --primary-light: #66b1ff;
+  --primary-dark: #3a8ee6;
+  /* 侧边栏背景色 */
+  --sidebar-bg: #304156;
+  --sidebar-text: #bfcbd9;
+  --sidebar-active-text: #409eff;
+  /* 功能色 */
+  --success-color: #67c23a; /* 成功/可借图书 */
+  --warning-color: #e6a23c; /* 警告/即将到期 */
+  --error-color: #f56c6c; /* 错误/超期记录 */
+  --info-color: #909399; /* 信息/申请中标 */
+  /* 文本色 */
+  --text-primary: #303133;
+  --text-secondary: #606266;
+  --text-muted: #909399;
+  /* 背景色 */
+  --background-light: #f5f7fa;
+  --background-white: #ffffff;
+  --background-gray: #ecf5ff;
+  /* 边框色 */
+  --border-color: #e4e7ed;
+  
+  /* 过渡动画 */
+  --transition-normal: 0.3s ease;
+  
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 全局重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* 链接样式 */
+a {
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+}
+
+a:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* 按钮样式 */
+button {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* 次要按钮样式 */
+button.secondary {
+  background-color: var(--background-white);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+button.secondary:hover {
+  background-color: var(--background-gray);
+}
+
+/* 功能按钮样式 */
+button.success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+button.success:hover {
+  opacity: 0.9;
+}
+
+button.error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+button.error:hover {
+  opacity: 0.9;
+}
+
+button.info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+button.info:hover {
+  opacity: 0.9;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--background-white);
+  border-radius: var(--radius-md);
+  padding: 1.5em;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5em;
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* 标题样式 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 输入框样式 */
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.75em 1em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--background-white);
+  color: var(--text-primary);
+  transition: all var(--transition-normal);
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a6a9ad;
+}
+
+/* 工具类 */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* 间距工具类 */
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 2rem; }
+
+.ml-1 { margin-left: 0.25rem; }
+.ml-2 { margin-left: 0.5rem; }
+.ml-3 { margin-left: 1rem; }
+.ml-4 { margin-left: 1.5rem; }
+.ml-5 { margin-left: 2rem; }
+
+.mr-1 { margin-right: 0.25rem; }
+.mr-2 { margin-right: 0.5rem; }
+.mr-3 { margin-right: 1rem; }
+.mr-4 { margin-right: 1.5rem; }
+.mr-5 { margin-right: 2rem; }
+
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.p-4 { padding: 1.5rem; }
+.p-5 { padding: 2rem; }
+
+/* 状态样式 */
+.status-overdue {
+  color: var(--error-color);
+  font-weight: 500;
+}
+
+.status-available {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+.status-approved {
+  color: var(--info-color);
+  font-weight: 500;
+}
+
+.status-pending {
+  color: var(--warning-color);
+  font-weight: 500;
+}
+
+/* 表格样式 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background-color: var(--background-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: #f5f7fa;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:hover {
+  background-color: #ecf5ff;
+}
+
+/* 响应式设计优化 */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.375rem;
+  }
+  
+  h3 {
+    font-size: 1.125rem;
+  }
+  
+  .card {
+    padding: 1.25em;
+  }
+  
+  button {
+    padding: 0.5em 1em;
+    font-size: 0.9rem;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 0.5rem;
+  }
+  
+  /* 确保核心按钮不挤压 */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-group button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  .card {
+    padding: 1em;
+  }
+}
+
+/* 平板设备响应式设计 */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .card {
+    padding: 1.25em;
+  }
+  
+  table {
+    font-size: 0.95rem;
+  }
+}
+
+/* 暗黑模式支持 */
+html.dark {
+  --text-primary: #bfcbd9;
+  --text-secondary: #8391a5;
+  --text-muted: #4e6a8a;
+  --background-light: #1d1d1d;
+  --background-white: #2d2d2d;
+  --background-gray: #2d3748;
+  --border-color: #3d3d3d;
+}
+
+html.dark .card {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+html.dark input, html.dark select, html.dark textarea {
+  background-color: var(--background-gray);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.2);
+}
+
+html.dark table {
+  background-color: var(--background-white);
+  color: var(--text-primary);
+}
+
+html.dark th {
+  background-color: var(--background-gray) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark tr:hover {
+  background-color: var(--background-gray);
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: var(--background-gray);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* 通用容器类暗黑模式 */
+html.dark .container,
+html.dark .wrapper,
+html.dark .box,
+html.dark .panel,
+html.dark .section,
+html.dark .area {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 表单容器 */
+html.dark .form-container,
+html.dark .form-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 搜索容器 */
+html.dark .search-container,
+html.dark .search-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 表格容器 */
+html.dark .table-container,
+html.dark .table-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 统计容器 */
+html.dark .stat-container,
+html.dark .stat-wrapper,
+html.dark .stat-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 信息容器 */
+html.dark .info-container,
+html.dark .info-wrapper,
+html.dark .info-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 数据容器 */
+html.dark .data-container,
+html.dark .data-wrapper,
+html.dark .data-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 结果容器 */
+html.dark .result-container,
+html.dark .result-wrapper,
+html.dark .result-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 上传容器 */
+html.dark .upload-container,
+html.dark .upload-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 预览容器 */
+html.dark .preview-container,
+html.dark .preview-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 编辑容器 */
+html.dark .edit-container,
+html.dark .edit-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 详情容器 */
+html.dark .detail-container,
+html.dark .detail-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 列表容器 */
+html.dark .list-container,
+html.dark .list-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 卡片容器 */
+html.dark .card-container,
+html.dark .card-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 模态框容器 */
+html.dark .modal-container,
+html.dark .modal-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 抽屉容器 */
+html.dark .drawer-container,
+html.dark .drawer-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 步骤容器 */
+html.dark .steps-container,
+html.dark .steps-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 标签页容器 */
+html.dark .tabs-container,
+html.dark .tabs-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 导航容器 */
+html.dark .nav-container,
+html.dark .nav-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 分页容器 */
+html.dark .pagination-container,
+html.dark .pagination-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 加载容器 */
+html.dark .loading-container,
+html.dark .loading-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 错误容器 */
+html.dark .error-container,
+html.dark .error-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 成功容器 */
+html.dark .success-container,
+html.dark .success-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 警告容器 */
+html.dark .warning-container,
+html.dark .warning-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 信息容器 */
+html.dark .info-container,
+html.dark .info-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 确认容器 */
+html.dark .confirm-container,
+html.dark .confirm-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 提示容器 */
+html.dark .tip-container,
+html.dark .tip-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 帮助容器 */
+html.dark .help-container,
+html.dark .help-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 关于容器 */
+html.dark .about-container,
+html.dark .about-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 设置容器 */
+html.dark .settings-container,
+html.dark .settings-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 个人中心容器 */
+html.dark .profile-container,
+html.dark .profile-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 仪表盘容器 */
+html.dark .dashboard-container,
+html.dark .dashboard-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 统计报表容器 */
+html.dark .statistics-container,
+html.dark .statistics-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 日志容器 */
+html.dark .logs-container,
+html.dark .logs-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 用户容器 */
+html.dark .users-container,
+html.dark .users-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 图书容器 */
+html.dark .books-container,
+html.dark .books-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 借阅容器 */
+html.dark .borrow-container,
+html.dark .borrow-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 预约容器 */
+html.dark .appointment-container,
+html.dark .appointment-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 读者容器 */
+html.dark .readers-container,
+html.dark .readers-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 权限容器 */
+html.dark .permission-container,
+html.dark .permission-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 角色容器 */
+html.dark .role-container,
+html.dark .role-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 菜单容器 */
+html.dark .menu-container,
+html.dark .menu-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 导航容器 */
+html.dark .navigation-container,
+html.dark .navigation-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 页脚容器 */
+html.dark .footer-container,
+html.dark .footer-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 头部容器 */
+html.dark .header-container,
+html.dark .header-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 侧边栏容器 */
+html.dark .sidebar-container,
+html.dark .sidebar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 内容容器 */
+html.dark .content-container,
+html.dark .content-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 工具栏容器 */
+html.dark .toolbar-container,
+html.dark .toolbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 操作栏容器 */
+html.dark .actionbar-container,
+html.dark .actionbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 按钮栏容器 */
+html.dark .buttonbar-container,
+html.dark .buttonbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 状态栏容器 */
+html.dark .statusbar-container,
+html.dark .statusbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 标题栏容器 */
+html.dark .titlebar-container,
+html.dark .titlebar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 副标题栏容器 */
+html.dark .subtitlebar-container,
+html.dark .subtitlebar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 面包屑容器 */
+html.dark .breadcrumb-container,
+html.dark .breadcrumb-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 分页栏容器 */
+html.dark .paginationbar-container,
+html.dark .paginationbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 筛选栏容器 */
+html.dark .filterbar-container,
+html.dark .filterbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 排序栏容器 */
+html.dark .sortbar-container,
+html.dark .sortbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 搜索栏容器 */
+html.dark .searchbar-container,
+html.dark .searchbar-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 打印样式 */
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+  
+  button {
+    display: none;
+  }
+}
+
+/* 无障碍优化 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 通用容器类 */
+.container, .wrapper, .box, .panel, .section, .area {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 表单容器 */
+.form-container, .form-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 搜索容器 */
+.search-container, .search-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 表格容器 */
+.table-container, .table-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 统计容器 */
+.stat-container, .stat-wrapper, .stat-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 信息容器 */
+.info-container, .info-wrapper, .info-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 数据容器 */
+.data-container, .data-wrapper, .data-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 结果容器 */
+.result-container, .result-wrapper, .result-box {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 上传容器 */
+.upload-container, .upload-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 预览容器 */
+.preview-container, .preview-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 编辑容器 */
+.edit-container, .edit-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 详情容器 */
+.detail-container, .detail-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 列表容器 */
+.list-container, .list-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 卡片容器 */
+.card-container, .card-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 模态框容器 */
+.modal-container, .modal-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 抽屉容器 */
+.drawer-container, .drawer-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 步骤容器 */
+.steps-container, .steps-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 标签页容器 */
+.tabs-container, .tabs-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 导航容器 */
+.nav-container, .nav-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 分页容器 */
+.pagination-container, .pagination-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 加载容器 */
+.loading-container, .loading-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 错误容器 */
+.error-container, .error-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 成功容器 */
+.success-container, .success-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 警告容器 */
+.warning-container, .warning-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 信息容器 */
+.info-container, .info-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 确认容器 */
+.confirm-container, .confirm-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 提示容器 */
+.tip-container, .tip-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 帮助容器 */
+.help-container, .help-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 关于容器 */
+.about-container, .about-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 设置容器 */
+.settings-container, .settings-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 个人中心容器 */
+.profile-container, .profile-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 仪表盘容器 */
+.dashboard-container, .dashboard-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 统计报表容器 */
+.statistics-container, .statistics-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 日志容器 */
+.logs-container, .logs-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 用户容器 */
+.users-container, .users-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 图书容器 */
+.books-container, .books-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 借阅容器 */
+.borrow-container, .borrow-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 预约容器 */
+.appointment-container, .appointment-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 读者容器 */
+.readers-container, .readers-wrapper {
+  background-color: var(--background-white);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* 通用样式优化 */
+.el-menu {
+  border-right: none;
+}
+
+.el-menu-item {
+  margin: 0 16px;
+  border-radius: 4px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.el-menu-item.is-active {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.el-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.el-menu-item-group {
+  padding: 0;
+}
+
+.el-menu-item-group__title {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 8px;
+}
