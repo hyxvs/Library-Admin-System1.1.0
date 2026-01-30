@@ -1,5 +1,7 @@
 # 图书馆管理系统 v1.1.0
 
+**创建时间**：2026-01-30
+
 ## 项目简介
 
 图书馆管理系统是一个现代化的、功能完善的图书馆管理解决方案，采用前后端分离架构设计，旨在提高图书馆管理效率，优化读者服务体验。系统提供了全面的图书管理、读者管理、借阅管理、预约管理和统计报表等功能，支持多设备访问，具有良好的用户界面和用户体验。
@@ -1389,7 +1391,7 @@ A: 修改以下文件：
 ```
 ISC License
 
-Copyright (c) 2024, Library Admin System Team
+Copyright (c) 2026, Library Admin System Team
 
 Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
