@@ -5,7 +5,7 @@ const pool = require('../config/database');
 const logger = require('../config/logger');
 const { authMiddleware } = require('../middleware/auth');
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;

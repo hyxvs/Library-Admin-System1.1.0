@@ -5,7 +5,7 @@ const logger = require('../config/logger');
 const { authMiddleware } = require('../middleware/auth');
 const ExcelJS = require('exceljs');
 
-router.get('/dashboard', authMiddleware, async (req, res) => {
+router.get('/dashboard', async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 30;
     

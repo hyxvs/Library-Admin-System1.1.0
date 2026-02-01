@@ -11,6 +11,7 @@ const express = require('express'); // 导入Express框架
 const router = express.Router(); // 创建路由实例
 const readerAuth = require('../middleware/readerAuth'); // 读者认证中间件
 const readerController = require('../controllers/readerController'); // 读者控制器
+const upload = require('../config/multer');
 
 /**
  * 无需认证的路由
@@ -35,6 +36,9 @@ router.post('/reset-password', readerController.resetPassword);
  */
 router.use(readerAuth);
 
+// 登出
+router.post('/logout', readerController.logout);
+
 /**
  * 用户相关路由
  */
@@ -47,6 +51,9 @@ router.put('/user/profile', readerController.updateUserProfile);
 
 // 修改密码
 router.post('/user/change-password', readerController.changePassword);
+
+// 上传头像
+router.post('/user/avatar', upload.single('file'), readerController.uploadAvatar);
 
 // 获取用户统计信息
 router.get('/user/statistics', readerController.getUserStatistics);

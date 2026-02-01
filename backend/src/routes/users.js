@@ -248,7 +248,7 @@ router.put('/profile', authMiddleware, [
 });
 
 // 修改当前用户密码
-router.put('/change-password', authMiddleware, [
+router.put('/change-password', [
   body('oldPassword').notEmpty().withMessage('旧密码不能为空'),
   body('newPassword').isLength({ min: 6 }).withMessage('新密码至少6位')
 ], async (req, res) => {

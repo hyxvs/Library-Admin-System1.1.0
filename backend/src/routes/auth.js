@@ -236,33 +236,32 @@ router.post('/register', [
 router.post('/logout', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({
-        code: 401,
-        msg: '未提供认证令牌',
-        data: null
-      });
-    }
+    
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const sessionId = decoded.sessionId;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const sessionId = decoded.sessionId;
+        if (sessionId) {
+          // 更新登录会话记录
+          await pool.query(
+            `UPDATE login_sessions 
+             SET logout_time = CURRENT_TIMESTAMP, 
+                 duration = TIMESTAMPDIFF(SECOND, login_time, CURRENT_TIMESTAMP), 
+                 status = 'ended' 
+             WHERE id = ? AND status = 'active'`,
+            [sessionId]
+          );
 
-    if (sessionId) {
-      // 更新登录会话记录
-      await pool.query(
-        `UPDATE login_sessions 
-         SET logout_time = CURRENT_TIMESTAMP, 
-             duration = TIMESTAMPDIFF(SECOND, login_time, CURRENT_TIMESTAMP), 
-             status = 'ended' 
-         WHERE id = ? AND status = 'active'`,
-        [sessionId]
-      );
-
-      // 记录登出操作
-      await pool.query(
-        'INSERT INTO operation_logs (user_id, username, module, action, description, ip_address) VALUES (?, ?, ?, ?, ?, ?)',
-        [decoded.id, decoded.username, 'auth', 'logout', '用户登出', req.ip]
-      );
+          // 记录登出操作
+          await pool.query(
+            'INSERT INTO operation_logs (user_id, username, module, action, description, ip_address) VALUES (?, ?, ?, ?, ?, ?)',
+            [decoded.id, decoded.username, 'auth', 'logout', '用户登出', req.ip]
+          );
+        }
+      } catch (tokenError) {
+        logger.error('Token验证失败:', tokenError);
+      }
     }
 
     res.json({
@@ -285,6 +284,7 @@ router.get('/reset-password', async (req, res) => {
   try {
     const bcrypt = require('bcryptjs');
     const newPassword = await bcrypt.hash('123456', 10);
+    console.log('新密码哈希:', newPassword);
 
     await pool.query(
       'UPDATE users SET password = ? WHERE username = ?',
@@ -305,6 +305,8 @@ router.get('/reset-password', async (req, res) => {
     });
   }
 });
+
+
 
 // 获取登录历史记录
 router.get('/login-history', async (req, res) => {

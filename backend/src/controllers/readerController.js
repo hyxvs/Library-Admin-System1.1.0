@@ -124,10 +124,18 @@ const login = async (req, res) => {
 // 注册
 const register = async (req, res) => {
   try {
-    const { username, password, confirmPassword, name, gender, reader_no, id_card, email } = req.body;
+    console.log('接收到的注册请求参数:', req.body);
     
-    // 验证参数
-    if (!username || !password || !confirmPassword || !name || !gender || !reader_no || !id_card) {
+    const username = req.body.username;
+    const password = req.body.password;
+    const realName = req.body.realName || req.body.real_name;
+    const idCard = req.body.idCard || req.body.id_card;
+    const email = req.body.email;
+    
+    if (!username || !password || !realName || !idCard || !email || 
+        username.trim() === '' || password.trim() === '' || 
+        realName.trim() === '' || idCard.trim() === '' || email.trim() === '') {
+      console.log('参数验证失败:', { username, password, realName, idCard, email });
       return res.status(400).json({
         code: 400,
         msg: '请填写完整的注册信息',
@@ -135,21 +143,15 @@ const register = async (req, res) => {
       });
     }
     
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        code: 400,
-        msg: '两次输入的密码不一致',
-        data: null
-      });
-    }
-    
-    // 验证用户名是否已注册
+    console.log('开始验证用户名是否已注册:', username);
     const [existingUsersByUsername] = await pool.execute(
       'SELECT * FROM sys_user WHERE username = ?',
       [username]
     );
     
+    console.log('验证用户名是否已注册结果:', existingUsersByUsername.length);
     if (existingUsersByUsername.length > 0) {
+      console.log('用户名已注册:', username);
       return res.status(400).json({
         code: 400,
         msg: '该用户名已注册',
@@ -157,43 +159,53 @@ const register = async (req, res) => {
       });
     }
     
-    // 验证读者号是否已注册
-    const [existingUsersByReaderNo] = await pool.execute(
-      'SELECT * FROM reader_info WHERE reader_no = ?',
-      [reader_no]
+    console.log('开始验证身份证号是否已注册:', idCard);
+    const [existingUsersByIdCard] = await pool.execute(
+      'SELECT * FROM reader_info WHERE id_card = ?',
+      [idCard]
     );
     
-    if (existingUsersByReaderNo.length > 0) {
+    console.log('验证身份证号是否已注册结果:', existingUsersByIdCard.length);
+    if (existingUsersByIdCard.length > 0) {
+      console.log('身份证号已注册:', idCard);
       return res.status(400).json({
         code: 400,
-        msg: '该读者号已注册',
+        msg: '该身份证号已注册',
         data: null
       });
     }
     
-    // 加密密码
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const reader_no = 'R' + Date.now().toString().slice(-8);
+    console.log('生成的读者编号:', reader_no);
     
-    // 开始事务
+    console.log('开始加密密码');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('密码加密完成');
+    
+    console.log('开始事务');
     await pool.query('START TRANSACTION');
+    console.log('事务开始成功');
     
     try {
-      // 创建系统用户
+      console.log('开始创建系统用户:', username);
       const [userResult] = await pool.execute(
         'INSERT INTO sys_user (username, password, role, status, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?)',
         [username, hashedPassword, 'reader', 'active', new Date(), new Date()]
       );
+      console.log('创建系统用户成功:', userResult.insertId);
       
       const userId = userResult.insertId;
       
-      // 创建读者信息
+      console.log('开始创建读者信息:', userId, reader_no, realName, idCard, email);
       await pool.execute(
         'INSERT INTO reader_info (user_id, reader_no, name, gender, id_card, email, credit_status, arrears_amount, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [userId, reader_no, name, gender, id_card, email || null, 'good', 0, new Date(), new Date()]
+        [userId, reader_no, realName, 'male', idCard, email, 'good', 0, new Date(), new Date()]
       );
+      console.log('创建读者信息成功');
       
-      // 提交事务
+      console.log('开始提交事务');
       await pool.query('COMMIT');
+      console.log('事务提交成功');
       
       return res.json({
         code: 200,
@@ -201,8 +213,9 @@ const register = async (req, res) => {
         data: null
       });
     } catch (error) {
-      // 回滚事务
+      console.log('开始回滚事务');
       await pool.query('ROLLBACK');
+      console.log('事务回滚成功');
       throw error;
     }
   } catch (error) {
@@ -316,7 +329,7 @@ const getUserInfo = async (req, res) => {
     const { reader_id } = req.user;
     
     const [readers] = await pool.execute(
-      'SELECT reader_no, name, gender, email, id_card, credit_status, arrears_amount, create_time FROM reader_info WHERE id = ?',
+      'SELECT reader_no, name, gender, email, id_card, credit_status, arrears_amount, create_time, avatar FROM reader_info WHERE id = ?',
       [reader_id]
     );
     
@@ -347,10 +360,9 @@ const getUserInfo = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const { reader_id } = req.user;
-    const { name, gender, phone, email } = req.body;
+    const { name, gender, email } = req.body;
     
-    // 验证参数
-    if (!name || !gender || !phone) {
+    if (!name || !gender) {
       return res.status(400).json({
         code: 400,
         msg: '请填写完整的信息',
@@ -376,7 +388,7 @@ const updateUserProfile = async (req, res) => {
     
     // 更新读者信息
     await pool.execute(
-      'UPDATE reader_info SET name = ?, gender = ?, email = ?, updated_at = ? WHERE id = ?',
+      'UPDATE reader_info SET name = ?, gender = ?, email = ?, update_time = ? WHERE id = ?',
       [name, gender, email || null, new Date(), reader_id]
     );
     
@@ -549,7 +561,7 @@ const searchBooks = async (req, res) => {
     const sizeNum = parseInt(pageSize) || 12;
     
     // 构建SQL语句
-    let query = 'SELECT b.id, b.isbn, b.title, b.author, b.publisher, b.publish_date, b.price, b.location, b.total_count, b.available_count, b.status, b.borrow_count, c.category_name as category_name FROM books b LEFT JOIN categories c ON b.category_id = c.id WHERE 1=1';
+    let query = 'SELECT b.id, b.isbn, b.title, b.author, b.publisher, b.publish_date, b.price, b.location, b.total_count, b.available_count, b.status, b.borrow_count, b.cover, c.category_name as category_name FROM books b LEFT JOIN categories c ON b.category_id = c.id WHERE 1=1';
     
     // 关键词搜索
     if (keyword) {
@@ -673,7 +685,7 @@ const getBookDetail = async (req, res) => {
 const getHotBooks = async (req, res) => {
   try {
     const [books] = await pool.execute(
-      'SELECT b.id, b.isbn, b.title, b.author, b.publisher, b.publish_date, b.price, b.location, b.total_count, b.available_count, b.status, b.borrow_count, c.category_name as category_name FROM books b LEFT JOIN categories c ON b.category_id = c.id ORDER BY b.borrow_count DESC LIMIT 10',
+      'SELECT b.id, b.isbn, b.title, b.author, b.publisher, b.publish_date, b.price, b.location, b.total_count, b.available_count, b.status, b.borrow_count, b.cover, c.category_name as category_name FROM books b LEFT JOIN categories c ON b.category_id = c.id ORDER BY b.borrow_count DESC LIMIT 10',
       []
     );
     
@@ -1439,11 +1451,69 @@ const getSystemConfig = async (req, res) => {
   }
 };
 
+// 登出
+const logout = async (req, res) => {
+  try {
+    // 前端已经处理了 token 的清除
+    // 这里可以添加一些额外的逻辑，比如记录登出日志
+    return res.json({
+      code: 200,
+      msg: '登出成功',
+      data: null
+    });
+  } catch (error) {
+    console.error('登出失败:', error);
+    return res.status(500).json({
+      code: 500,
+      msg: '登出失败',
+      data: null
+    });
+  }
+};
+
+// 上传头像
+const uploadAvatar = async (req, res) => {
+  try {
+    const { reader_id } = req.user;
+    
+    if (!req.file) {
+      return res.status(400).json({
+        code: 400,
+        msg: '请选择要上传的头像',
+        data: null
+      });
+    }
+    
+    const avatarUrl = `/uploads/${req.file.filename}`;
+    
+    await pool.execute(
+      'UPDATE reader_info SET avatar = ?, update_time = ? WHERE id = ?',
+      [avatarUrl, new Date(), reader_id]
+    );
+    
+    return res.json({
+      code: 200,
+      msg: '头像上传成功',
+      data: {
+        avatar: avatarUrl
+      }
+    });
+  } catch (error) {
+    console.error('上传头像失败:', error);
+    return res.status(500).json({
+      code: 500,
+      msg: '上传头像失败',
+      data: null
+    });
+  }
+};
+
 module.exports = {
   login,
   register,
   sendSmsCode,
   resetPassword,
+  logout,
   getUserInfo,
   updateUserProfile,
   changePassword,
@@ -1462,5 +1532,6 @@ module.exports = {
   borrowBook,
   getAnnouncements,
   getLatestAnnouncement,
-  getSystemConfig
+  getSystemConfig,
+  uploadAvatar
 };

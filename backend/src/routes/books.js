@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const pool = require('../config/database');
 const logger = require('../config/logger');
 const { authMiddleware } = require('../middleware/auth');
+const upload = require('../config/multer');
 
 // 测试路由
 router.get('/test', async (req, res) => {
@@ -437,7 +438,7 @@ router.get('/add-all-data', async (req, res) => {
   }
 });
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
@@ -461,14 +462,20 @@ router.get('/', authMiddleware, async (req, res) => {
       params.push(`%${req.query.author}%`);
     }
 
-    if (req.query.category_id) {
+    if (req.query.category_id && req.query.category_id !== '') {
       whereClause += ' AND category_id = ?';
       params.push(req.query.category_id);
     }
 
-    if (req.query.status !== undefined) {
-      whereClause += ' AND status = ?';
-      params.push(req.query.status);
+    if (req.query.status !== undefined && req.query.status !== '') {
+      if (req.query.status === 'available') {
+        whereClause += ' AND status = 1';
+      } else if (req.query.status === 'empty') {
+        whereClause += ' AND status = 0';
+      } else {
+        whereClause += ' AND status = ?';
+        params.push(req.query.status);
+      }
     }
 
     const [books] = await pool.query(
@@ -501,7 +508,7 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -533,7 +540,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, [
+router.post('/', [
   body('isbn').notEmpty().withMessage('ISBN不能为空'),
   body('title').notEmpty().withMessage('书名不能为空'),
   body('author').notEmpty().withMessage('作者不能为空'),
@@ -571,26 +578,12 @@ router.post('/', authMiddleware, [
   }
 });
 
-router.put('/:id', authMiddleware, [
-  body('isbn').notEmpty().withMessage('ISBN不能为空'),
-  body('title').notEmpty().withMessage('书名不能为空'),
-  body('author').notEmpty().withMessage('作者不能为空'),
-  body('category_id').notEmpty().withMessage('分类不能为空')
-], async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        code: 400,
-        msg: '参数验证失败',
-        data: errors.array()
-      });
-    }
-
     const { id } = req.params;
     const { isbn, title, author, publisher, publish_date, price, category_id, total_count, location, description, status, cover } = req.body;
 
-    const [books] = await pool.query('SELECT available_count, total_count FROM books WHERE id = ?', [id]);
+    const [books] = await pool.query('SELECT * FROM books WHERE id = ?', [id]);
     if (books.length === 0) {
       return res.status(404).json({
         code: 404,
@@ -599,14 +592,33 @@ router.put('/:id', authMiddleware, [
       });
     }
 
-    const oldTotalCount = books[0].total_count;
-    const oldAvailableCount = books[0].available_count;
+    // 获取现有数据，用于默认值
+    const existingBook = books[0];
+    const oldTotalCount = existingBook.total_count;
+    const oldAvailableCount = existingBook.available_count;
     const newTotalCount = total_count || oldTotalCount;
     const newAvailableCount = oldAvailableCount + (newTotalCount - oldTotalCount);
 
+    // 构建更新数据，只更新提供的字段
+    const updateData = {
+      isbn: isbn || existingBook.isbn,
+      title: title || existingBook.title,
+      author: author || existingBook.author,
+      publisher: publisher || existingBook.publisher,
+      publish_date: publish_date || existingBook.publish_date,
+      price: price || existingBook.price,
+      category_id: category_id || existingBook.category_id,
+      total_count: newTotalCount,
+      available_count: newAvailableCount,
+      location: location || existingBook.location,
+      description: description || existingBook.description,
+      status: status !== undefined ? status : existingBook.status,
+      cover: cover !== undefined ? cover : existingBook.cover
+    };
+
     await pool.query(
       'UPDATE books SET isbn = ?, title = ?, author = ?, publisher = ?, publish_date = ?, price = ?, category_id = ?, total_count = ?, available_count = ?, location = ?, description = ?, cover = ?, status = ? WHERE id = ?',
-      [isbn, title, author, publisher, publish_date, price, category_id, newTotalCount, newAvailableCount, location, description, cover, status, id]
+      [updateData.isbn, updateData.title, updateData.author, updateData.publisher, updateData.publish_date, updateData.price, updateData.category_id, updateData.total_count, updateData.available_count, updateData.location, updateData.description, updateData.cover, updateData.status, id]
     );
 
     res.json({
@@ -624,7 +636,7 @@ router.put('/:id', authMiddleware, [
   }
 });
 
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     logger.info(`开始删除图书，ID: ${id}`);
@@ -661,30 +673,6 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       });
     }
 
-    // 检查是否有任何借阅记录（包括已归还的）
-    logger.info('检查是否有任何借阅记录');
-    const [allBorrowRecords] = await pool.query(
-      'SELECT COUNT(*) as count FROM borrow_records WHERE book_id = ?',
-      [id]
-    );
-    logger.info(`借阅记录数量: ${allBorrowRecords[0].count}`);
-
-    if (allBorrowRecords[0].count > 0) {
-      return res.status(400).json({
-        code: 400,
-        msg: '该图书还有借阅记录，无法删除',
-        data: null
-      });
-    }
-
-    // 尝试获取appointments表中具体的记录
-    logger.info('尝试获取appointments表中具体的记录');
-    const [appointments] = await pool.query(
-      'SELECT * FROM appointments WHERE book_id = ?',
-      [id]
-    );
-    logger.info(`appointments表中具体记录: ${JSON.stringify(appointments)}`);
-
     // 执行删除操作
     logger.info('执行删除操作');
     const [deleteResult] = await pool.query('DELETE FROM books WHERE id = ?', [id]);
@@ -705,7 +693,39 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/categories/list', authMiddleware, async (req, res) => {
+router.post('/upload', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        code: 400,
+        msg: '没有上传文件',
+        data: null
+      });
+    }
+
+    const fileUrl = `/uploads/${req.file.filename}`;
+
+    res.json({
+      code: 200,
+      msg: '上传成功',
+      data: {
+        url: fileUrl,
+        filename: req.file.filename,
+        originalname: req.file.originalname,
+        size: req.file.size
+      }
+    });
+  } catch (error) {
+    logger.error('上传图片失败:', error);
+    res.status(500).json({
+      code: 500,
+      msg: '上传图片失败',
+      data: null
+    });
+  }
+});
+
+router.get('/categories/list', async (req, res) => {
   try {
     const [categories] = await pool.query('SELECT * FROM categories ORDER BY id');
 
@@ -724,7 +744,7 @@ router.get('/categories/list', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/isbn', authMiddleware, async (req, res) => {
+router.get('/isbn', async (req, res) => {
   try {
     const { isbn } = req.query;
 

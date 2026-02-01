@@ -5,7 +5,7 @@ const pool = require('../config/database');
 const logger = require('../config/logger');
 const { authMiddleware } = require('../middleware/auth');
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
@@ -66,7 +66,7 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -99,7 +99,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, [
+router.post('/', [
   body('reader_no').notEmpty().withMessage('读者编号不能为空'),
   body('name').notEmpty().withMessage('读者姓名不能为空'),
   body('id_card').matches(/^\d{17}[\dXx]$/).withMessage('身份证号格式不正确')
@@ -157,7 +157,7 @@ router.post('/', authMiddleware, [
   }
 });
 
-router.put('/:id', authMiddleware, [
+router.put('/:id', [
   body('reader_no').notEmpty().withMessage('读者编号不能为空'),
   body('name').notEmpty().withMessage('读者姓名不能为空'),
   body('id_card').matches(/^\d{17}[\dXx]$/).withMessage('身份证号格式不正确')
@@ -208,7 +208,7 @@ router.put('/:id', authMiddleware, [
   }
 });
 
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     logger.info(`开始删除读者，ID: ${id}`);
@@ -326,7 +326,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-router.put('/:id/credit', authMiddleware, [
+router.put('/:id/credit', [
   body('credit_status').isIn(['normal', 'overdue', 'debt']).withMessage('信用状态不正确')
 ], async (req, res) => {
   try {
