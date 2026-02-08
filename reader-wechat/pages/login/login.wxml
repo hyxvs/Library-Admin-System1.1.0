@@ -1,0 +1,135 @@
+<!-- pages/login/login.wxml -->
+<view class="login-page">
+  <view class="login-header">
+    <view class="logo">
+      <text class="logo-icon">📚</text>
+    </view>
+    <text class="title">图书馆读者系统</text>
+    <text class="subtitle">欢迎登录</text>
+  </view>
+  
+  <view class="login-tabs">
+    <view class="tab {{activeTab === 'login' ? 'active' : ''}}" bindtap="switchTab" data-tab="login">
+      登录
+    </view>
+    <view class="tab {{activeTab === 'register' ? 'active' : ''}}" bindtap="switchTab" data-tab="register">
+      注册
+    </view>
+  </view>
+  
+  <!-- 登录表单 -->
+  <view wx:if="{{activeTab === 'login'}}" class="form">
+    <view class="form-item">
+      <text class="label">用户名</text>
+      <input 
+        class="input" 
+        placeholder="请输入用户名" 
+        bindinput="onLoginInput" 
+        data-field="username"
+        value="{{loginForm.username}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">密码</text>
+      <input 
+        class="input" 
+        type="password" 
+        placeholder="请输入密码" 
+        bindinput="onLoginInput" 
+        data-field="password"
+        value="{{loginForm.password}}"
+      />
+    </view>
+    
+    <view class="login-btn">
+      <button 
+        class="btn-primary" 
+        type="primary" 
+        bindtap="handleLogin" 
+        loading="{{loading}}"
+        disabled="{{loading}}"
+      >
+        登录
+      </button>
+    </view>
+  </view>
+  
+  <!-- 注册表单 -->
+  <view wx:if="{{activeTab === 'register'}}" class="form">
+    <view class="form-item">
+      <text class="label">用户名</text>
+      <input 
+        class="input" 
+        placeholder="请输入用户名" 
+        bindinput="onRegisterInput" 
+        data-field="username"
+        value="{{registerForm.username}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">密码</text>
+      <input 
+        class="input" 
+        type="password" 
+        placeholder="请输入密码" 
+        bindinput="onRegisterInput" 
+        data-field="password"
+        value="{{registerForm.password}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">确认密码</text>
+      <input 
+        class="input" 
+        type="password" 
+        placeholder="请再次输入密码" 
+        bindinput="onRegisterInput" 
+        data-field="confirmPassword"
+        value="{{registerForm.confirmPassword}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">真实姓名</text>
+      <input 
+        class="input" 
+        placeholder="请输入真实姓名" 
+        bindinput="onRegisterInput" 
+        data-field="realName"
+        value="{{registerForm.realName}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">身份证号</text>
+      <input 
+        class="input" 
+        placeholder="请输入身份证号" 
+        bindinput="onRegisterInput" 
+        data-field="idCard"
+        value="{{registerForm.idCard}}"
+      />
+    </view>
+    <view class="form-item">
+      <text class="label">邮箱</text>
+      <input 
+        class="input" 
+        type="text" 
+        placeholder="请输入邮箱" 
+        bindinput="onRegisterInput" 
+        data-field="email"
+        value="{{registerForm.email}}"
+      />
+    </view>
+    
+    <view class="login-btn">
+      <button 
+        class="btn-primary" 
+        type="primary" 
+        bindtap="handleRegister" 
+        loading="{{loading}}"
+        disabled="{{loading}}"
+      >
+        注册
+      </button>
+    </view>
+  </view>
+</view>

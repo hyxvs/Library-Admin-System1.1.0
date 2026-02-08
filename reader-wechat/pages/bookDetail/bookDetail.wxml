@@ -1,0 +1,74 @@
+<!-- pages/bookDetail/bookDetail.wxml -->
+<view class="book-detail-page">
+  <!-- 图书基本信息 -->
+  <view class="book-header">
+    <image src="{{getCoverUrl(book && book.cover)}}" mode="aspectFill" class="book-cover" />
+    <view class="book-info">
+      <text class="book-title">{{book && book.title ? book.title : ''}}</text>
+      <text class="book-author">{{book && book.author ? book.author : ''}}</text>
+      <text class="book-publisher">{{book && book.publisher ? book.publisher : ''}} · {{book && book.publish_date ? book.publish_date : ''}}</text>
+      <text class="book-isbn">ISBN: {{book && book.isbn ? book.isbn : ''}}</text>
+      <view class="book-meta">
+        <view class="meta-item">
+          <text class="meta-label">分类：</text>
+          <text class="meta-value">{{book && book.category_name ? book.category_name : '未分类'}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">位置：</text>
+          <text class="meta-value">{{book && book.location ? book.location : ''}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">价格：</text>
+          <text class="meta-value price">{{book && book.price ? book.price : ''}}</text>
+        </view>
+      </view>
+      <view class="book-stock">
+        <text class="stock-label">馆藏：</text>
+        <text class="stock-value">{{book && book.total_count ? book.total_count : 0}} 册</text>
+        <text class="stock-separator">|</text>
+        <text class="stock-label">可借：</text>
+        <text class="stock-value available">{{book && book.available_count ? book.available_count : 0}} 册</text>
+      </view>
+      <view class="book-status">
+        <view 
+          class="status-tag {{book && book.status === 1 ? 'available' : 'unavailable'}}"
+        >
+          {{book && book.status === 1 ? '可借' : '不可借'}}
+        </view>
+        <text class="borrow-count">已借阅 {{book && book.borrow_count ? book.borrow_count : 0}} 次</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 图书详情 -->
+  <view class="book-content">
+    <view class="section">
+      <text class="section-title">内容简介</text>
+      <text class="section-content">{{book && book.description ? book.description : '暂无简介'}}</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button 
+      class="btn-borrow" 
+      type="primary" 
+      size="default" 
+      bindtap="handleBorrow"
+      disabled="{{!(book && book.status === 1) || loading}}"
+      loading="{{loading}}"
+    >
+      立即借阅
+    </button>
+    <button 
+      class="btn-reserve" 
+      type="default" 
+      size="default" 
+      bindtap="handleReserve"
+      disabled="{{book && book.status === 1 || loading}}"
+      loading="{{loading}}"
+    >
+      预约
+    </button>
+  </view>
+</view>

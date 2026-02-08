@@ -1,0 +1,140 @@
+/* pages/login/login.wxss */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 100rpx 40rpx 40rpx;
+}
+
+.login-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 80rpx;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 40rpx;
+}
+
+.logo-icon {
+  font-size: 80rpx;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  opacity: 0.9;
+  display: block;
+}
+
+.login-tabs {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 12rpx;
+  margin-bottom: 60rpx;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  color: white;
+  font-size: 32rpx;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  background-color: white;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.form {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.input {
+  border: 1rpx solid #e8e8e8;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  background-color: #f9f9f9;
+}
+
+.login-btn {
+  margin-top: 50rpx;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 8rpx;
+  background-color: #1989fa;
+  color: white;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.input:focus {
+  border-color: #1989fa;
+  background-color: white;
+}
+
+/* 适配不同屏幕 */
+@media (max-height: 667px) {
+  .login-page {
+    padding-top: 60rpx;
+  }
+  
+  .login-header {
+    margin-bottom: 60rpx;
+  }
+  
+  .logo {
+    width: 120rpx;
+    height: 120rpx;
+  }
+  
+  .logo-icon {
+    font-size: 60rpx;
+  }
+  
+  .title {
+    font-size: 36rpx;
+  }
+}

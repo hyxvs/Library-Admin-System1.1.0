@@ -1,0 +1,86 @@
+/* common.wxss */
+
+/* 主题颜色 */
+:root {
+  --primary-color: #1989fa;
+  --danger-color: #ee0a24;
+  --success-color: #07c160;
+  --warning-color: #ff976a;
+  --info-color: #909399;
+  
+  --text-color: #333;
+  --text-color-secondary: #666;
+  --text-color-light: #999;
+  
+  --border-color: #ebedf0;
+  --background-color: #f5f5f5;
+  --white: #fff;
+}
+
+/* 字体大小 */
+.text-xs {
+  font-size: 24rpx;
+}
+
+.text-sm {
+  font-size: 28rpx;
+}
+
+.text-base {
+  font-size: 32rpx;
+}
+
+.text-lg {
+  font-size: 36rpx;
+}
+
+.text-xl {
+  font-size: 40rpx;
+}
+
+/* 间距 */
+.p-1 {
+  padding: 10rpx;
+}
+
+.p-2 {
+  padding: 20rpx;
+}
+
+.p-3 {
+  padding: 30rpx;
+}
+
+.m-1 {
+  margin: 10rpx;
+}
+
+.m-2 {
+  margin: 20rpx;
+}
+
+.m-3 {
+  margin: 30rpx;
+}
+
+/* 圆角 */
+.rounded {
+  border-radius: 8rpx;
+}
+
+.rounded-lg {
+  border-radius: 12rpx;
+}
+
+.rounded-full {
+  border-radius: 9999rpx;
+}
+
+/* 阴影 */
+.shadow {
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.shadow-lg {
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.12);
+}

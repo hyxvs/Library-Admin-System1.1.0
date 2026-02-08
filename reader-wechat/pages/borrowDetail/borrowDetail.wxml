@@ -1,0 +1,68 @@
+<!-- pages/borrowDetail/borrowDetail.wxml -->
+<view class="borrow-detail-page">
+  <!-- 借阅基本信息 -->
+  <view class="borrow-header">
+    <view class="borrow-info">
+      <view class="info-item">
+        <text class="info-label">借阅号：</text>
+        <text class="info-value">{{borrowRecord && borrowRecord.borrow_no ? borrowRecord.borrow_no : ''}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">借阅状态：</text>
+        <view 
+          class="status-tag {{getStatusClass(borrowRecord && borrowRecord.status, borrowRecord && borrowRecord.due_date)}}"
+        >
+          {{getStatusText(borrowRecord && borrowRecord.status, borrowRecord && borrowRecord.due_date)}}
+        </view>
+      </view>
+      <view class="info-item">
+        <text class="info-label">借阅日期：</text>
+        <text class="info-value">{{borrowRecord && borrowRecord.borrow_date ? borrowRecord.borrow_date : ''}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">应还日期：</text>
+        <text class="info-value {{isOverdue(borrowRecord && borrowRecord.due_date) ? 'overdue' : ''}}">{{borrowRecord && borrowRecord.due_date ? borrowRecord.due_date : ''}}</text>
+      </view>
+      <view class="info-item" wx:if="{{borrowRecord && borrowRecord.return_date}}">
+        <text class="info-label">归还日期：</text>
+        <text class="info-value">{{borrowRecord && borrowRecord.return_date ? borrowRecord.return_date : ''}}</text>
+      </view>
+      <view class="info-item" wx:if="{{borrowRecord && borrowRecord.overdue_days}}">
+        <text class="info-label">逾期天数：</text>
+        <text class="info-value overdue">{{borrowRecord && borrowRecord.overdue_days ? borrowRecord.overdue_days : 0}} 天</text>
+      </view>
+      <view class="info-item" wx:if="{{borrowRecord && borrowRecord.renew_count}}">
+        <text class="info-label">续借次数：</text>
+        <text class="info-value">{{borrowRecord && borrowRecord.renew_count ? borrowRecord.renew_count : 0}} 次</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 图书信息 -->
+  <view class="book-info">
+    <text class="section-title">图书信息</text>
+    <view class="book-details">
+      <image src="{{getCoverUrl(borrowRecord && borrowRecord.cover)}}" mode="aspectFill" class="book-cover" />
+      <view class="book-meta">
+        <text class="book-title">{{borrowRecord && borrowRecord.title ? borrowRecord.title : ''}}</text>
+        <text class="book-author">{{borrowRecord && borrowRecord.author ? borrowRecord.author : ''}}</text>
+        <text class="book-publisher">{{borrowRecord && borrowRecord.publisher ? borrowRecord.publisher : ''}}</text>
+        <text class="book-isbn">ISBN: {{borrowRecord && borrowRecord.isbn ? borrowRecord.isbn : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons" wx:if="{{borrowRecord && borrowRecord.status === 'borrowed' && !isOverdue(borrowRecord && borrowRecord.due_date)}}">
+    <button 
+      class="btn-renew" 
+      type="primary" 
+      size="default" 
+      bindtap="handleRenew"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+    >
+      续借
+    </button>
+  </view>
+</view>

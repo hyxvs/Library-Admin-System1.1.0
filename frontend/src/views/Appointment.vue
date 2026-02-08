@@ -15,6 +15,7 @@
               clearable
               class="search-input"
             />
+            <!--  clearable：当输入框中有内容时，右侧会显示一个清除图标（×），点击后立即清空输入框的值，无需手动删除。 -->
           </el-form-item>
           <el-form-item label="ISBN">
             <el-input
@@ -58,7 +59,7 @@
       </div>
     </el-card>
 
-    <el-card class="table-card" style="margin-top: 20px;">
+    <el-card class="table-card" style="margin-top: 20px">
       <template #header>
         <div class="card-header">
           <span>预约列表</span>
@@ -91,10 +92,7 @@
         <el-table-column prop="appointmentTime" label="预约时间" width="180" />
         <el-table-column prop="status" label="预约状态" width="120">
           <template #default="scope">
-            <el-tag
-              :type="getStatusType(scope.row.status)"
-              effect="dark"
-            >
+            <el-tag :type="getStatusType(scope.row.status)" effect="dark">
               {{ getStatusText(scope.row.status) }}
             </el-tag>
           </template>
@@ -111,11 +109,7 @@
               <el-icon><ChatDotRound /></el-icon>
               发送提醒
             </el-button>
-            <el-button
-              type="danger"
-              size="small"
-              @click="cancelAppointment(scope.row)"
-            >
+            <el-button type="danger" size="small" @click="cancelAppointment(scope.row)">
               <el-icon><Delete /></el-icon>
               取消预约
             </el-button>
@@ -132,6 +126,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
+        <!-- el-pagination分页控件，实现数据分页切换，支持页码、每页条数和快捷跳转 -->
       </div>
     </el-card>
 
@@ -142,6 +137,7 @@
       width="500px"
       draggable
     >
+      <!-- el-dialog 是 Element Plus 框架中的 对话框组件 ，用于弹出模态窗口，显示重要信息或表单，常用于确认操作、信息展示、数据编辑等场景。 -->
       <el-form :model="reminderForm">
         <el-form-item label="读者姓名">
           <el-input v-model="reminderForm.readerName" disabled />
@@ -161,8 +157,12 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="reminderDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="confirmSendReminder" :loading="sendingReminder">
-            {{ sendingReminder ? '发送中...' : '发送' }}
+          <el-button
+            type="primary"
+            @click="confirmSendReminder"
+            :loading="sendingReminder"
+          >
+            {{ sendingReminder ? "发送中..." : "发送" }}
           </el-button>
         </span>
       </template>
@@ -171,80 +171,74 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElNotification, ElMessageBox } from 'element-plus'
-import {
-  Search,
-  Refresh,
-  Download,
-  ChatDotRound,
-  Delete
-} from '@element-plus/icons-vue'
-import { useUserStore } from '@/stores/user'
+import { ref, reactive, onMounted } from "vue";
+import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
+import { Search, Refresh, Download, ChatDotRound, Delete } from "@element-plus/icons-vue";
+import { useUserStore } from "@/stores/user";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 // 搜索表单
 const searchForm = reactive({
-  bookName: '',
-  isbn: '',
-  readerId: '',
-  status: ''
-})
+  bookName: "",
+  isbn: "",
+  readerId: "",
+  status: "",
+});
 
 // 预约列表
-const appointmentList = ref([])
+const appointmentList = ref([]);
 
 // 分页
 const pagination = reactive({
   current: 1,
   pageSize: 10,
-  total: 0
-})
+  total: 0,
+});
 
 // 加载状态
-const loading = ref(false)
+const loading = ref(false);
 
 // 发送提醒弹窗
-const reminderDialogVisible = ref(false)
-const sendingReminder = ref(false)
+const reminderDialogVisible = ref(false);
+const sendingReminder = ref(false);
 const reminderForm = reactive({
-  readerName: '',
-  bookName: '',
-  content: ''
-})
+  readerName: "",
+  bookName: "",
+  content: "",
+});
 
 // 方法
 const fetchAppointments = async () => {
-  console.log('开始获取预约列表')
-  loading.value = true
+  console.log("开始获取预约列表");
+  loading.value = true;
   try {
-    const params = new URLSearchParams()
-    params.append('page', pagination.current)
-    params.append('pageSize', pagination.pageSize)
+    const params = new URLSearchParams();
+    params.append("page", pagination.current);
+    params.append("pageSize", pagination.pageSize);
     if (searchForm.bookName) {
-      params.append('book_title', searchForm.bookName)
+      params.append("book_title", searchForm.bookName);
     }
     if (searchForm.readerId) {
-      params.append('reader_name', searchForm.readerId)
+      params.append("reader_name", searchForm.readerId);
     }
     if (searchForm.status) {
-      params.append('status', searchForm.status)
+      params.append("status", searchForm.status);
     }
-    
-    console.log('请求参数:', params.toString())
+
+    console.log("请求参数:", params.toString());
     const response = await fetch(`/api/appointment?${params.toString()}`, {
       headers: {
-        'Authorization': `Bearer ${userStore.token}`
-      }
-    })
-    
-    console.log('响应状态:', response.status)
-    const data = await response.json()
-    console.log('响应数据:', data)
+        Authorization: `Bearer ${userStore.token}`,
+      },
+    });
+
+    console.log("响应状态:", response.status);
+    const data = await response.json();
+    console.log("响应数据:", data);
     if (data.code === 200) {
-      console.log('获取预约列表成功，共', data.data.list.length, '条记录')
-      appointmentList.value = data.data.list.map(item => ({
+      console.log("获取预约列表成功，共", data.data.list.length, "条记录");
+      appointmentList.value = data.data.list.map((item) => ({
         id: item.id,
         bookName: item.book_title,
         isbn: item.isbn,
@@ -252,137 +246,138 @@ const fetchAppointments = async () => {
         readerName: item.reader_name,
         appointmentTime: item.appointment_date,
         status: item.status,
-        expireTime: item.appointment_date
-      }))
-      console.log('转换后的预约列表:', appointmentList.value)
-      pagination.total = data.data.total
+        expireTime: item.appointment_date,
+      }));
+      console.log("转换后的预约列表:", appointmentList.value);
+      pagination.total = data.data.total;
     } else {
-      ElMessage.error(data.msg || '获取预约记录失败')
+      ElMessage.error(data.msg || "获取预约记录失败");
     }
   } catch (error) {
-    console.error('获取预约记录失败:', error)
-    ElMessage.error('获取预约记录失败，请稍后再试')
+    console.error("获取预约记录失败:", error);
+    ElMessage.error("获取预约记录失败，请稍后再试");
   } finally {
-    loading.value = false
-    console.log('获取预约列表完成')
+    loading.value = false;
+    console.log("获取预约列表完成");
   }
-}
+};
 
 const handleSearch = () => {
-  pagination.current = 1
-  fetchAppointments()
-}
-
+  pagination.current = 1;
+  fetchAppointments();
+};
 
 const handleSizeChange = (size) => {
-  pagination.pageSize = size
-  fetchAppointments()
-}
+  pagination.pageSize = size;
+  fetchAppointments();
+};
 
 const handleCurrentChange = (current) => {
-  pagination.current = current
-  fetchAppointments()
-}
+  pagination.current = current;
+  fetchAppointments();
+};
 
 const getStatusType = (status) => {
   switch (status) {
-    case 'pending':
-      return 'warning'
-    case 'completed':
-      return 'success'
-    case 'cancelled':
-      return 'danger'
+    case "pending":
+      return "warning";
+    case "completed":
+      return "success";
+    case "cancelled":
+      return "danger";
     default:
-      return ''
+      return "";
   }
-}
+};
 
 const getStatusText = (status) => {
   switch (status) {
-    case 'pending':
-      return '未提醒'
-    case 'completed':
-      return '已完成'
-    case 'cancelled':
-      return '已取消'
+    case "pending":
+      return "未提醒";
+    case "completed":
+      return "已完成";
+    case "cancelled":
+      return "已取消";
     default:
-      return status
+      return status;
   }
-}
+};
 
 const sendReminder = (row) => {
-  reminderForm.readerName = row.readerName
-  reminderForm.bookName = row.bookName
-  reminderForm.content = `尊敬的${row.readerName}，您预约的图书《${row.bookName}》已到馆，请及时到图书馆领取。`
-  reminderDialogVisible.value = true
-}
+  reminderForm.readerName = row.readerName;
+  reminderForm.bookName = row.bookName;
+  reminderForm.content = `尊敬的${row.readerName}，您预约的图书《${row.bookName}》已到馆，请及时到图书馆领取。`;
+  reminderDialogVisible.value = true;
+};
 
 const confirmSendReminder = async () => {
-  sendingReminder.value = true
+  sendingReminder.value = true;
   try {
     // 模拟发送提醒
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    reminderDialogVisible.value = false
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    reminderDialogVisible.value = false;
     ElNotification({
-      title: '成功',
-      message: '提醒已发送',
-      type: 'success',
-      duration: 2000
-    })
+      title: "成功",
+      message: "提醒已发送",
+      type: "success",
+      duration: 2000,
+    });
   } catch (error) {
-    ElMessage.error('发送失败，请稍后再试')
+    ElMessage.error("发送失败，请稍后再试");
   } finally {
-    sendingReminder.value = false
+    sendingReminder.value = false;
   }
-}
+};
 
 const cancelAppointment = async (row) => {
-  ElMessageBox.confirm(`确定要取消${row.readerName}的预约吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    try {
-      console.log('开始取消预约，ID:', row.id)
-      const response = await fetch(`/api/appointment/${row.id}/cancel`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${userStore.token}`,
-          'Content-Type': 'application/json'
+  ElMessageBox.confirm(`确定要取消${row.readerName}的预约吗？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(async () => {
+      try {
+        console.log("开始取消预约，ID:", row.id);
+        const response = await fetch(`/api/appointment/${row.id}/cancel`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${userStore.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        console.log("取消预约响应:", data);
+        if (data.code === 200) {
+          ElNotification({
+            title: "成功",
+            message: "预约已取消",
+            type: "success",
+            duration: 2000,
+          });
+          console.log("开始刷新预约列表");
+          await fetchAppointments();
+          console.log("预约列表刷新完成");
+        } else {
+          ElMessage.error(data.msg || "取消预约失败");
         }
-      })
-      
-      const data = await response.json()
-      console.log('取消预约响应:', data)
-      if (data.code === 200) {
-        ElNotification({
-          title: '成功',
-          message: '预约已取消',
-          type: 'success',
-          duration: 2000
-        })
-        console.log('开始刷新预约列表')
-        await fetchAppointments()
-        console.log('预约列表刷新完成')
-      } else {
-        ElMessage.error(data.msg || '取消预约失败')
+      } catch (error) {
+        console.error("取消预约失败:", error);
+        ElMessage.error("取消预约失败，请稍后再试");
       }
-    } catch (error) {
-      console.error('取消预约失败:', error)
-      ElMessage.error('取消预约失败，请稍后再试')
-    }
-  }).catch(() => {})
-}
+    })
+    .catch(() => {});
+};
 
 const exportExcel = () => {
   // 模拟导出
-  ElMessage.success('导出成功，可前往下载')
-}
+  ElMessage.success("导出成功，可前往下载");
+};
 
 // 生命周期
 onMounted(() => {
-  fetchAppointments()
-})
+  fetchAppointments();
+});
 </script>
 
 <style scoped>

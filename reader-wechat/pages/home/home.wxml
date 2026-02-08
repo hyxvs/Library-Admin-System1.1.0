@@ -1,0 +1,100 @@
+<!-- pages/home/home.wxml -->
+<view class="home-page">
+  <!-- 顶部欢迎区 -->
+  <view class="welcome-section">
+    <view class="welcome-content">
+      <text class="welcome-text">欢迎，{{userInfo && userInfo.name ? userInfo.name : '读者'}}</text>
+      <text class="sub-text">今日 {{currentDate}}</text>
+    </view>
+    <view class="user-avatar" bindtap="goToProfile">
+      <image 
+        src="{{userInfo && userInfo.avatar ? userInfo.avatar : 'https://img.yzcdn.cn/vant/cat.jpeg'}}" 
+        mode="aspectFill"
+      />
+    </view>
+  </view>
+  
+  <!-- 快捷入口 -->
+  <view class="quick-entry">
+    <view class="entry-item" bindtap="goToBooks">
+      <view class="entry-icon">
+        <text>📚</text>
+      </view>
+      <text class="entry-text">图书查询</text>
+    </view>
+    <view class="entry-item" bindtap="goToBorrow">
+      <view class="entry-icon">
+        <text>📖</text>
+      </view>
+      <text class="entry-text">我的借阅</text>
+    </view>
+    <view class="entry-item" bindtap="goToReservation">
+      <view class="entry-icon">
+        <text>⏰</text>
+      </view>
+      <text class="entry-text">我的预约</text>
+    </view>
+    <view class="entry-item" bindtap="goToProfile">
+      <view class="entry-icon">
+        <text>👤</text>
+      </view>
+      <text class="entry-text">个人中心</text>
+    </view>
+  </view>
+  
+  <!-- 统计信息 -->
+  <view class="stats-section" wx:if="{{userStats}}">
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-value">{{userStats.totalBorrow || 0}}</text>
+        <text class="stat-label">累计借阅</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{userStats.currentBorrow || 0}}</text>
+        <text class="stat-label">当前借阅</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{userStats.totalReservation || 0}}</text>
+        <text class="stat-label">累计预约</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 热门图书 -->
+  <view class="hot-books-section">
+    <view class="section-header">
+      <text class="section-title">热门图书</text>
+      <text class="section-more" bindtap="goToBooks">查看更多</text>
+    </view>
+    <view class="books-list">
+      <view 
+        wx:for="{{hotBooks}}" 
+        wx:key="id" 
+        class="book-item" 
+        bindtap="goToBookDetail" 
+        data-id="{{item.id}}"
+      >
+        <image src="{{getCoverUrl(item.cover)}}" mode="aspectFill" class="book-cover" />
+        <view class="book-info">
+          <text class="book-title">{{item.title}}</text>
+          <text class="book-author">{{item.author}}</text>
+          <text class="book-borrow-count">借阅 {{item.borrow_count || 0}}次</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 公告信息 -->
+  <view class="announcement-section" wx:if="{{announcement}}">
+    <view class="section-header">
+      <text class="section-title">最新公告</text>
+    </view>
+    <view class="announcement-card">
+      <text class="announcement-title">{{announcement.title}}</text>
+      <text class="announcement-content">{{announcement.content}}</text>
+      <text class="announcement-time">{{announcement.created_at}}</text>
+    </view>
+  </view>
+</view>

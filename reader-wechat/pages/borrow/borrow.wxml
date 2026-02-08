@@ -1,0 +1,107 @@
+<!-- pages/borrow/borrow.wxml -->
+<view class="borrow-page">
+  <!-- 筛选选项 -->
+  <view class="filter-bar">
+    <view 
+      class="filter-item {{filterStatus === 'all' ? 'active' : ''}}"
+      bindtap="filterByStatus"
+      data-status="all"
+    >
+      全部
+    </view>
+    <view 
+      class="filter-item {{filterStatus === 'borrowed' ? 'active' : ''}}"
+      bindtap="filterByStatus"
+      data-status="borrowed"
+    >
+      借阅中
+    </view>
+    <view 
+      class="filter-item {{filterStatus === 'returned' ? 'active' : ''}}"
+      bindtap="filterByStatus"
+      data-status="returned"
+    >
+      已归还
+    </view>
+    <view 
+      class="filter-item {{filterStatus === 'overdue' ? 'active' : ''}}"
+      bindtap="filterByStatus"
+      data-status="overdue"
+    >
+      已逾期
+    </view>
+  </view>
+
+  <!-- 借阅列表 -->
+  <view class="borrow-list">
+    <view 
+      wx:for="{{borrowRecords}}" 
+      wx:key="id" 
+      class="borrow-item"
+      bindtap="goToBorrowDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="borrow-header">
+        <text class="borrow-no">借阅号：{{item.borrow_no}}</text>
+        <view 
+          class="status-tag {{getStatusClass(item.status, item.due_date)}}"
+        >
+          {{getStatusText(item.status, item.due_date)}}
+        </view>
+      </view>
+      <view class="book-info">
+        <image src="{{getCoverUrl(item.cover)}}" mode="aspectFill" class="book-cover" />
+        <view class="book-details">
+          <text class="book-title">{{item.title}}</text>
+          <text class="book-author">{{item.author}}</text>
+          <view class="borrow-dates">
+            <view class="date-item">
+              <text class="date-label">借阅日期：</text>
+              <text class="date-value">{{item.borrow_date}}</text>
+            </view>
+            <view class="date-item">
+              <text class="date-label">应还日期：</text>
+              <text class="date-value {{isOverdue(item.due_date) ? 'overdue' : ''}}">{{item.due_date}}</text>
+            </view>
+            <view class="date-item" wx:if="{{item.return_date}}">
+              <text class="date-label">归还日期：</text>
+              <text class="date-value">{{item.return_date}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="borrow-actions">
+        <button 
+          wx:if="{{item.status === 'borrowed' && !isOverdue(item.due_date)}}"
+          class="btn-renew"
+          type="primary"
+          size="mini"
+          bindtap="handleRenew"
+          data-id="{{item.id}}"
+          catchtap="handleRenew"
+        >
+          续借
+        </button>
+        <text wx:else class="action-text">
+          {{item.status === 'borrowed' && isOverdue(item.due_date) ? '已逾期' : '无操作'}}
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}">
+    <text bindtap="loadMore">点击加载更多</text>
+  </view>
+
+  <!-- 无数据提示 -->
+  <view class="empty-tip" wx:if="{{borrowRecords.length === 0 && !loading}}">
+    <text class="empty-icon">📚</text>
+    <text class="empty-text">暂无借阅记录</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-tip" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

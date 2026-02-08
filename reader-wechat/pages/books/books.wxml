@@ -1,0 +1,122 @@
+<!-- pages/books/books.wxml -->
+<view class="books-page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="search-icon">🔍</text>
+      <input 
+        type="text" 
+        placeholder="搜索图书名称、作者、ISBN" 
+        value="{{keyword}}" 
+        bindinput="onKeywordInput"
+        bindconfirm="handleSearch"
+      />
+      <text 
+        wx:if="{{keyword}}" 
+        class="clear-icon" 
+        bindtap="clearKeyword"
+      >✕</text>
+    </view>
+    <button 
+      class="search-btn" 
+      type="primary" 
+      size="mini" 
+      bindtap="handleSearch"
+    >
+      搜索
+    </button>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <scroll-view scroll-x="true" class="filter-scroll">
+      <view 
+        wx:for="{{categories}}" 
+        wx:key="id" 
+        class="filter-item {{selectedCategory === item.id ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-id="{{item.id}}"
+      >
+        {{item.name}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 排序选项 -->
+  <view class="sort-bar">
+    <text class="sort-label">排序：</text>
+    <view class="sort-options">
+      <view 
+        class="sort-item {{sortBy === 'default' ? 'active' : ''}}"
+        bindtap="sortBy"
+        data-type="default"
+      >
+        默认
+      </view>
+      <view 
+        class="sort-item {{sortBy === 'hot' ? 'active' : ''}}"
+        bindtap="sortBy"
+        data-type="hot"
+      >
+        热门
+      </view>
+      <view 
+        class="sort-item {{sortBy === 'publish_date' ? 'active' : ''}}"
+        bindtap="sortBy"
+        data-type="publish_date"
+      >
+        最新
+      </view>
+    </view>
+  </view>
+
+  <!-- 图书列表 -->
+  <view class="books-list">
+    <view 
+      wx:for="{{books}}" 
+      wx:key="id" 
+      class="book-item" 
+      bindtap="goToBookDetail"
+      data-id="{{item.id}}"
+    >
+      <image 
+        src="{{getCoverUrl(item.cover)}}" 
+        mode="aspectFill" 
+        class="book-cover"
+      />
+      <view class="book-info">
+        <text class="book-title">{{item.title}}</text>
+        <text class="book-author">{{item.author}}</text>
+        <text class="book-publisher">{{item.publisher}}</text>
+        <view class="book-meta">
+          <text class="book-category">{{item.category_name || '未分类'}}</text>
+          <text class="book-borrow-count">借阅 {{item.borrow_count || 0}}次</text>
+        </view>
+        <view class="book-status">
+          <view 
+            class="status-tag {{item.status === 1 ? 'available' : 'unavailable'}}"
+          >
+            {{item.status === 1 ? '可借' : '不可借'}}
+          </view>
+          <text class="book-price">¥{{item.price}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}">
+    <text bindtap="loadMore">点击加载更多</text>
+  </view>
+
+  <!-- 无数据提示 -->
+  <view class="empty-tip" wx:if="{{books.length === 0 && !loading}}">
+    <text class="empty-icon">📚</text>
+    <text class="empty-text">暂无图书数据</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-tip" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>
